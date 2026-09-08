@@ -7,14 +7,27 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FieldTestingNav } from './FieldTestingNav';
 
+type AppRoute = '/home' | '/new-test' | '/camera' | '/history' | '/profile' | '/test-result';
+
 type FieldTestingPageProps = {
   title: string;
   subtitle: string;
   icon: SymbolViewProps['name'];
   children: ReactNode;
+  headerTitle?: string;
+  backRoute?: AppRoute;
+  backLabel?: string;
 };
 
-export function FieldTestingPage({ title, subtitle, icon, children }: FieldTestingPageProps) {
+export function FieldTestingPage({
+  title,
+  subtitle,
+  icon,
+  children,
+  headerTitle = 'Field Drug Testing',
+  backRoute = '/home',
+  backLabel = 'Go to Home',
+}: FieldTestingPageProps) {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <StatusBar style="dark" />
@@ -23,9 +36,9 @@ export function FieldTestingPage({ title, subtitle, icon, children }: FieldTesti
           <View style={styles.content}>
             <View style={styles.topBar}>
               <Pressable
-                accessibilityLabel="Go to Home"
+                accessibilityLabel={backLabel}
                 accessibilityRole="button"
-                onPress={() => router.replace('/home')}
+                onPress={() => router.replace(backRoute)}
                 style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}>
                 <SymbolView
                   name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }}
@@ -33,7 +46,7 @@ export function FieldTestingPage({ title, subtitle, icon, children }: FieldTesti
                   tintColor="#1D556B"
                 />
               </Pressable>
-              <Text style={styles.brandName}>Field Drug Testing</Text>
+              <Text style={styles.brandName}>{headerTitle}</Text>
               <View style={styles.topBarSpacer} />
             </View>
             <View style={styles.pageHeading}>
