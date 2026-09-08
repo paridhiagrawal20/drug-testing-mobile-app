@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FieldTestingNav } from './FieldTestingNav';
 
-type AppRoute = '/home' | '/new-test' | '/camera' | '/history' | '/profile' | '/test-result';
+type AppRoute = '/home' | '/new-test' | '/camera' | '/history' | '/profile' | '/test-result' | '/test-details';
 
 type FieldTestingPageProps = {
   title: string;
