@@ -13,7 +13,7 @@ export default function TestDetailsScreen() {
   return (
     <FieldTestingPage
       title="Record overview"
-      subtitle="Mock details for the selected field test."
+      subtitle="Complete information for the selected test."
       headerTitle="Test Details"
       backRoute="/history"
       backLabel="Go to Test History"
@@ -39,28 +39,81 @@ export default function TestDetailsScreen() {
         <Text style={styles.sectionTitle}>Test information</Text>
         <DetailRow label="Test ID" value={test.id} />
         <DetailRow label="Sample ID" value={test.sampleId} />
-        <DetailRow label="Date/time" value={test.dateTime} />
         <DetailRow label="Test type" value={test.testType} />
-        <DetailRow label="Sample type" value={test.sampleType} />
+        <DetailRow label="Date and time" value={test.dateTime} />
         <DetailRow label="Location" value={test.location} />
+        <DetailRow label="Test result" value={test.result} valueColor={resultColor} />
         <DetailRow label="Status" value={test.status} last />
       </View>
 
-      <View style={styles.resultCard}>
-        <View style={styles.resultCardHeader}>
-          <Text style={styles.sectionTitle}>Result</Text>
-          <View style={styles.mockLabel}>
-            <Text style={styles.mockLabelText}>MOCK RESULT</Text>
+      <View style={styles.analysisCard}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.sectionTitle}>Analysis details</Text>
+          <Text style={styles.mockLabel}>MOCK VALUES</Text>
+        </View>
+        <AnalysisRow label="Analysis confidence" value="98.4%" />
+        <AnalysisRow label="Calibration status" value="Calibrated" />
+        <AnalysisRow label="Image quality" value="Good" last />
+      </View>
+
+      <View style={styles.operatorCard}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.sectionTitle}>Operator information</Text>
+          <View style={styles.operatorIcon}>
+            <SymbolView name={{ ios: 'person.fill', android: 'person', web: 'person' }} size={17} tintColor="#1D6877" />
           </View>
         </View>
-        <View style={styles.resultRow}>
-          <View style={[styles.resultDot, { backgroundColor: resultColor }]} />
-          <Text style={[styles.resultValue, { color: resultColor }]}>{test.result.toUpperCase()}</Text>
-        </View>
-        <Text style={styles.resultDescription}>
-          This record is for interface preview only and has not been connected to a backend.
-        </Text>
+        <DetailRow label="Officer" value="Officer James Carter" />
+        <DetailRow label="Officer ID" value="OF-10428" />
+        <DetailRow label="Agency" value="Metro Public Safety" last />
       </View>
+
+      <View style={styles.imageCard}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.sectionTitle}>Test image</Text>
+          <Text style={styles.mockLabel}>PLACEHOLDER</Text>
+        </View>
+        <View style={styles.imagePlaceholder}>
+          <View style={styles.imagePlaceholderIcon}>
+            <SymbolView
+              name={{ ios: 'photo.fill', android: 'image', web: 'image' }}
+              size={28}
+              tintColor="#7A9199"
+            />
+          </View>
+          <Text style={styles.imageTitle}>Test capture preview</Text>
+          <Text style={styles.imageDescription}>The captured test image will appear here.</Text>
+        </View>
+      </View>
+
+      <View style={styles.integrityCard}>
+        <View style={styles.cardHeader}>
+          <View style={styles.integrityTitleWrap}>
+            <SymbolView
+              name={{ ios: 'lock.shield.fill', android: 'verified_user', web: 'verified_user' }}
+              size={20}
+              tintColor="#4D8065"
+            />
+            <Text style={styles.sectionTitle}>Record Integrity</Text>
+          </View>
+          <Text style={styles.mockLabel}>MOCK</Text>
+        </View>
+        <IntegrityRow label="SHA-256 Hash" value="a8f3...9d21" />
+        <IntegrityRow label="Digital Signature" value="Verified" />
+        <IntegrityRow label="Tamper Status" value="No changes detected" last />
+      </View>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => undefined}
+        style={({ pressed }) => [styles.reportButton, pressed && styles.pressed]}>
+        <SymbolView
+          name={{ ios: 'square.and.arrow.up', android: 'share', web: 'share' }}
+          size={19}
+          tintColor="#1D556B"
+        />
+        <Text style={styles.reportButtonText}>Download/Share Report</Text>
+      </Pressable>
 
       <Pressable
         accessibilityRole="button"
@@ -77,13 +130,50 @@ type DetailRowProps = {
   label: string;
   value: string;
   last?: boolean;
+  valueColor?: string;
 };
 
-function DetailRow({ label, value, last = false }: DetailRowProps) {
+function DetailRow({ label, value, last = false, valueColor }: DetailRowProps) {
   return (
     <View style={[styles.detailRow, last && styles.detailRowLast]}>
       <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue}>{value}</Text>
+      <Text style={[styles.detailValue, valueColor && { color: valueColor }]}>{value}</Text>
+    </View>
+  );
+}
+
+type AnalysisRowProps = {
+  label: string;
+  value: string;
+  last?: boolean;
+};
+
+function AnalysisRow({ label, value, last = false }: AnalysisRowProps) {
+  return (
+    <View style={[styles.analysisRow, last && styles.analysisRowLast]}>
+      <View style={styles.analysisLabelWrap}>
+        <View style={styles.analysisDot} />
+        <Text style={styles.analysisLabel}>{label}</Text>
+      </View>
+      <Text style={styles.analysisValue}>{value}</Text>
+    </View>
+  );
+}
+
+type IntegrityRowProps = {
+  label: string;
+  value: string;
+  last?: boolean;
+};
+
+function IntegrityRow({ label, value, last = false }: IntegrityRowProps) {
+  return (
+    <View style={[styles.integrityRow, last && styles.integrityRowLast]}>
+      <Text style={styles.detailLabel}>{label}</Text>
+      <View style={styles.integrityValueWrap}>
+        <View style={styles.integrityDot} />
+        <Text style={styles.integrityValue}>{value}</Text>
+      </View>
     </View>
   );
 }
@@ -168,7 +258,81 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textAlign: 'right',
   },
-  resultCard: {
+  analysisCard: {
+    paddingHorizontal: 18,
+    paddingTop: 17,
+    paddingBottom: 6,
+    marginTop: 14,
+    borderRadius: 19,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E0E9EB',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  mockLabel: {
+    color: '#A47735',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.7,
+  },
+  analysisRow: {
+    minHeight: 43,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EDF1F2',
+  },
+  analysisRowLast: {
+    borderBottomWidth: 0,
+  },
+  analysisLabelWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  analysisDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#4D8065',
+  },
+  analysisLabel: {
+    color: '#526B77',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  analysisValue: {
+    color: '#4D8065',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  operatorCard: {
+    paddingHorizontal: 18,
+    paddingTop: 17,
+    paddingBottom: 6,
+    marginTop: 14,
+    borderRadius: 19,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E0E9EB',
+  },
+  operatorIcon: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#E3F0F1',
+  },
+  imageCard: {
     padding: 18,
     marginTop: 14,
     borderRadius: 19,
@@ -176,44 +340,97 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E9EB',
   },
-  resultCardHeader: {
-    flexDirection: 'row',
+  imagePlaceholder: {
+    minHeight: 190,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    padding: 20,
+    marginTop: 8,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#B9CDD1',
+    borderStyle: 'dashed',
+    backgroundColor: '#F4F8F8',
   },
-  mockLabel: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 12,
-    backgroundColor: '#FFF3DA',
+  imagePlaceholderIcon: {
+    width: 52,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 17,
+    backgroundColor: '#DFEAEC',
   },
-  mockLabelText: {
-    color: '#A47735',
-    fontSize: 9,
+  imageTitle: {
+    color: '#526B77',
+    fontSize: 14,
     fontWeight: '800',
-    letterSpacing: 0.6,
+    marginTop: 12,
   },
-  resultRow: {
+  imageDescription: {
+    color: '#82939D',
+    fontSize: 12,
+    marginTop: 5,
+    textAlign: 'center',
+  },
+  integrityCard: {
+    paddingHorizontal: 18,
+    paddingTop: 17,
+    paddingBottom: 6,
+    marginTop: 14,
+    borderRadius: 19,
+    backgroundColor: '#F6FBF8',
+    borderWidth: 1,
+    borderColor: '#CFE3D5',
+  },
+  integrityTitleWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: 17,
   },
-  resultDot: {
-    width: 9,
-    height: 9,
-    borderRadius: 5,
+  integrityRow: {
+    minHeight: 43,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DFEDE2',
   },
-  resultValue: {
-    fontSize: 18,
-    fontWeight: '900',
-    letterSpacing: 0.6,
+  integrityRowLast: {
+    borderBottomWidth: 0,
   },
-  resultDescription: {
-    color: '#82939D',
+  integrityValueWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  integrityDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#4D8065',
+  },
+  integrityValue: {
+    color: '#4D8065',
     fontSize: 12,
-    lineHeight: 18,
-    marginTop: 8,
+    fontWeight: '800',
+  },
+  reportButton: {
+    height: 51,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 18,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#C6D9DD',
+    backgroundColor: '#FFFFFF',
+  },
+  reportButtonText: {
+    color: '#1D556B',
+    fontSize: 14,
+    fontWeight: '800',
   },
   historyButton: {
     height: 49,
@@ -221,14 +438,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 7,
-    marginTop: 17,
+    marginTop: 10,
     borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#C6D9DD',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E3F0F1',
   },
   historyButtonText: {
-    color: '#1D556B',
+    color: '#1D6877',
     fontSize: 14,
     fontWeight: '800',
   },
