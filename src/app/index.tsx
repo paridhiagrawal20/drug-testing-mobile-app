@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
 import {
@@ -139,7 +140,10 @@ export default function LoginScreen() {
 
               <Pressable
                 accessibilityRole="button"
-                onPress={Keyboard.dismiss}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  router.replace('/home');
+                }}
                 style={({ pressed }) => [styles.loginButton, pressed && styles.loginButtonPressed]}>
                 <Text style={styles.loginButtonText}>Login</Text>
                 <SymbolView
