@@ -16,6 +16,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -73,6 +75,8 @@ export default function LoginScreen() {
                     placeholder="name@agency.gov"
                     placeholderTextColor="#94A3B8"
                     returnKeyType="next"
+                    value={username}
+                    onChangeText={setUsername}
                     style={styles.input}
                   />
                 </View>
@@ -92,6 +96,8 @@ export default function LoginScreen() {
                     placeholder="Enter your password"
                     placeholderTextColor="#94A3B8"
                     secureTextEntry={!passwordVisible}
+                    value={password}
+                    onChangeText={setPassword}
                     style={styles.input}
                   />
                   <Pressable
@@ -141,6 +147,7 @@ export default function LoginScreen() {
               <Pressable
                 accessibilityRole="button"
                 onPress={() => {
+                  if (!username.trim() || !password.trim()) return;
                   Keyboard.dismiss();
                   router.replace('/home');
                 }}
